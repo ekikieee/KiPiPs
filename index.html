@@ -566,8 +566,28 @@ function showFormatSelector() { formatSelector.hidden = false; requestAnimationF
 function hideFormatSelector() { formatSelector.classList.remove('visible'); requestAnimationFrame(() => { if (!formatSelector.classList.contains('visible')) formatSelector.hidden = true; }); }
 
 // ==== Download ====
-const INVIDIOUS_API = 'https://yt.chocolatemoo53.com';
+const INVIDIOUS_INSTANCES = [
+  'https://yt.chocolatemoo53.com',
+  'https://invidious.nerdvpn.de',
+  'https://inv.nadeko.net'
+];
 const TIKWM_API = 'https://tikwm.com/api/';
+let currentInvidious = 0;
+
+function getInvidiousApi() { return INVIDIOUS_INSTANCES[currentInvidious]; }
+function rotateInvidious() { currentInvidious = (currentInvidious + 1) % INVIDIOUS_INSTANCES.length; return getInvidiousApi(); }
+
+async function fetchWithFallback(url, options = {}) {
+  for (let i = 0; i < INVIDIOUS_INSTANCES.length; i++) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok) return res;
+      if (res.status >= 500 || res.status === 429) { rotateInvidious(); continue; }
+      return res;
+    } catch (e) { rotateInvidious(); }
+  }
+  throw new Error('All Invidious instances failed');
+}
 
 async function doDownload(forceMode) {
   if (loading) return;
@@ -593,6 +613,8 @@ async function doDownload(forceMode) {
       const result = await downloadSpotify(inputUrl, audio);
       if (result.tracks && result.tracks.length > 1) { isPlaylist = true; playlistTracks = result.tracks; }
       else if (result.url) { downloadUrl = result.url; }
+    } else if (platform === 'instagram') {
+      downloadUrl = await downloadInstagram(inputUrl, audio);
     } else {
       const params = new URLSearchParams({ url: inputUrl });
       if (audio) params.set('audio', '1');
@@ -624,8 +646,7 @@ async function doDownload(forceMode) {
 async function downloadYouTube(url, audioOnly) {
   const videoId = extractYouTubeId(url);
   if (!videoId) return null;
-  const res = await fetch(`${INVIDIOUS_API}/api/v1/videos/${videoId}`);
-  if (!res.ok) throw new Error('Invidious API error');
+  const res = await fetchWithFallback(`${getInvidiousApi()}/api/v1/videos/${videoId}`);
   const data = await res.json();
   if (audioOnly) { const f = data.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url); return f?.url || null; }
   else {
@@ -641,6 +662,19 @@ async function downloadTikTok(url) {
   if (!res.ok) throw new Error('TikWM API error');
   const data = await res.json();
   if (data.code === 0 && data.data) { return data.data.play || data.data.wmplay || data.data.hdplay || null; }
+  return null;
+}
+
+async function downloadInstagram(url, audioOnly) {
+  try {
+    const res = await fetch(`https://r.jina.ai/http://${url.replace(/^https?:\/\//, '')}`);
+    if (!res.ok) throw new Error('Jina AI fetch failed');
+    const text = await res.text();
+    const videoMatch = text.match(/https:\/\/[^\s]+\.mp4[^\s]*/);
+    if (videoMatch) return videoMatch[0];
+    const ogMatch = text.match(/og:video["\s]+content=["']([^"']+)["']/i);
+    if (ogMatch) return ogMatch[1];
+  } catch (e) { console.warn('Instagram parse failed:', e); }
   return null;
 }
 
@@ -664,7 +698,8 @@ function extractSpotifyPlaylistId(url) { const m = url.match(/spotify\.com\/play
 function extractSpotifyTrackId(url) { const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/); return m ? m[1] : null; }
 
 async function fetchSpotifyPlaylist(playlistId) {
-  const res = await fetch(`https://open.spotify.com/embed/playlist/${playlistId}`);
+  const res = await fetch(`https://r.jina.ai/http://open.spotify.com/embed/playlist/${playlistId}`);
+  if (!res.ok) return [];
   const html = await res.text();
   const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
   if (!match) return [];
@@ -673,7 +708,8 @@ async function fetchSpotifyPlaylist(playlistId) {
   return trackList.map(t => ({ title: t.title, artist: t.subtitle, query: `${t.title} ${t.subtitle}` }));
 }
 async function fetchSpotifyTrack(trackId) {
-  const res = await fetch(`https://open.spotify.com/embed/track/${trackId}`);
+  const res = await fetch(`https://r.jina.ai/http://open.spotify.com/embed/track/${trackId}`);
+  if (!res.ok) return null;
   const html = await res.text();
   const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
   if (!match) return null;
@@ -684,12 +720,12 @@ async function fetchSpotifyTrack(trackId) {
 }
 async function searchYouTubeAndGetAudio(track) {
   const q = encodeURIComponent(track.query);
-  const res = await fetch(`${INVIDIOUS_API}/api/v1/search?q=${q}&type=video`);
+  const res = await fetchWithFallback(`${getInvidiousApi()}/api/v1/search?q=${q}&type=video`);
   if (!res.ok) return null;
   const data = await res.json();
   const v = data[0];
   if (!v?.videoId) return null;
-  const vr = await fetch(`${INVIDIOUS_API}/api/v1/videos/${v.videoId}`);
+  const vr = await fetchWithFallback(`${getInvidiousApi()}/api/v1/videos/${v.videoId}`);
   if (!vr.ok) return null;
   const vd = await vr.json();
   const f = vd.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
