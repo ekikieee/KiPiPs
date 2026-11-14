@@ -4,167 +4,356 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="KiPiPs — download from TikTok, Instagram, YouTube, Facebook, X and Spotify. No ads. No limits.">
-<meta name="theme-color" content="#0A0A0F">
+<meta name="theme-color" content="#0B0B14">
 <title>KiPiPs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0A0A0F;
-  --surface:#13131A;
-  --border:#1E1E2E;
-  --accent:#7B2FFF;
-  --text:#F0F0F5;
-  --muted:#6B6B80;
-  --error:#FF4444;
-  --font:'Space Grotesk',system-ui,-apple-system,sans-serif;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0B0B14;
+  --surface: #14141F;
+  --surface-2: #1C1C2B;
+  --border: #2A2A3D;
+  --primary: #7B2FFF;
+  --primary-bright: #9D5CFF;
+  --primary-dim: rgba(123, 47, 255, .18);
+  --accent: #22C55E;
+  --text: #F8FAFC;
+  --text-dim: #CBD5E1;
+  --muted: #94A3B8;
+  --muted-dim: #64748B;
+  --error: #FB7185;
+  --error-bg: rgba(239, 68, 68, .12);
+  --success: #4ADE80;
+  --radius: 14px;
+  --radius-pill: 999px;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.35);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.45);
+  --shadow-glow: 0 0 24px rgba(123, 47, 255, .35);
+  --transition: 180ms cubic-bezier(.2, .7, .2, 1);
+  --focus-ring: 0 0 0 3px rgba(123, 47, 255, .45);
 }
-html{-webkit-text-size-adjust:100%}
-body{
-  font-family:var(--font);
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  line-height:1.5;
-  overflow-x:hidden;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
-main{
-  width:100%;
-  max-width:560px;
-  margin:0 auto;
-  padding:48px 16px 32px;
-  display:flex;
-  flex-direction:column;
-  gap:24px;
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
-.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+main {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 40px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  flex: 1;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 /* Hero */
-.hero{text-align:center}
-.brand{font-size:2.5rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
-.tagline{font-size:1rem;color:var(--muted);margin-top:6px}
-.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
-.badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:6px 12px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:50px;
-  font-size:0.8125rem;font-weight:400;color:var(--muted);
+.hero { text-align: center; padding-bottom: 8px; }
+.brand {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 6vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text) 0%, var(--primary-bright) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-.badge svg{width:14px;height:14px;flex:none}
-.badge.active{
-  border-color:var(--accent);
-  color:var(--text);
-  box-shadow:0 0 0 1px var(--accent),0 0 14px rgba(123,47,255,.35);
+.tagline {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-top: 10px;
+  font-weight: 400;
 }
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: border-color var(--transition), color var(--transition), box-shadow var(--transition);
+}
+.badge[data-icon] { color: inherit; }
+.badge[data-icon] svg { width: 16px; height: 16px; flex-shrink: 0; }
+.badge.active {
+  border-color: var(--primary);
+  color: var(--primary-bright);
+  box-shadow: 0 0 0 1px var(--primary), 0 0 18px rgba(123, 47, 255, .25);
+}
+.badge:hover:not(.active) { border-color: var(--muted-dim); color: var(--text-dim); }
 
 /* Composer */
-.composer{display:flex;flex-direction:column;gap:12px}
-.url-input{
-  width:100%;
-  padding:14px 16px;
-  font-family:inherit;font-size:1rem;font-weight:400;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:8px;
-  color:var(--text);
-  outline:none;
+.composer { display: flex; flex-direction: column; gap: 14px; }
+.url-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
-.url-input::placeholder{color:var(--muted)}
-.url-input:focus-visible{border-color:var(--accent);outline:2px solid rgba(123,47,255,.35);outline-offset:2px}
+.url-input-icon {
+  position: absolute;
+  left: 14px;
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+#urlInput {
+  width: 100%;
+  padding: 16px 16px 16px 52px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+#urlInput::placeholder { color: var(--muted-dim); }
+#urlInput:hover { border-color: var(--muted-dim); }
+#urlInput:focus-visible {
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
+}
+#urlInput:disabled { opacity: .6; cursor: not-allowed; }
 
-.format-selector{
-  max-height:0;opacity:0;transform:translateY(8px);
-  overflow:hidden;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  transition:max-height 200ms ease-out,opacity 200ms ease-out,transform 200ms ease-out;
+.format-selector {
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(8px);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: max-height 250ms var(--transition), opacity 200ms var(--transition), transform 200ms var(--transition);
 }
-.format-selector.visible{max-height:400px;opacity:1;transform:translateY(0)}
-.fmt-row{display:flex;align-items:center;gap:10px;padding:12px 14px}
-.fmt-row + .fmt-row{border-top:1px solid var(--border)}
-.fmt-label{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;flex:none;width:72px}
-.fmt-pills{display:flex;flex-wrap:wrap;gap:8px}
-.pill{
-  padding:6px 14px;
-  font-family:inherit;font-size:0.8125rem;font-weight:400;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:50px;
-  color:var(--text);
-  cursor:pointer;
+.format-selector.visible {
+  max-height: 500px;
+  opacity: 1;
+  transform: translateY(0);
 }
-.pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
-.pill-images{width:100%;text-align:center}
-.fmt-row-images{padding:10px 14px}
+.fmt-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; }
+.fmt-row + .fmt-row { border-top: 1px solid var(--border); }
+.fmt-label {
+  font-family: var(--font-display);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--muted-dim);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  flex-shrink: 0;
+  width: 80px;
+}
+.fmt-pills { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+.pill {
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: .82rem;
+  font-weight: 500;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all var(--transition);
+  min-height: 40px;
+}
+.pill:hover:not(.active) { background: var(--surface); border-color: var(--muted-dim); color: var(--text); }
+.pill:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px var(--primary), 0 4px 14px rgba(123, 47, 255, .3);
+}
+.pill[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+.fmt-row-images { padding: 12px 16px; }
+.pill-images { width: 100%; text-align: center; }
 
 /* Download button */
-.download-btn{
-  width:100%;
-  padding:14px 20px;
-  font-family:inherit;font-size:1.0625rem;font-weight:700;
-  background:var(--accent);
-  border:none;border-radius:50px;
-  color:#fff;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:10px;
+.download-btn {
+  width: 100%;
+  padding: 16px 24px;
+  font-family: var(--font-display);
+  font-size: 1.06rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-bright) 100%);
+  border: none;
+  border-radius: var(--radius-pill);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  min-height: 52px;
 }
-.download-btn:hover:not(:disabled){filter:brightness(1.15)}
-.download-btn:active:not(:disabled){transform:scale(0.97)}
-.download-btn:disabled{opacity:.55;cursor:not-allowed}
-.spinner{
-  width:16px;height:16px;flex:none;
-  border:2px solid rgba(255,255,255,.35);
-  border-top-color:#fff;
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-  display:none;
+.download-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: var(--shadow-glow), var(--shadow-md);
 }
-.download-btn.loading .spinner{display:block}
-.download-btn.loading .btn-text{display:none}
-@keyframes spin{to{transform:rotate(360deg)}}
+.download-btn:active:not(:disabled) { transform: scale(.98); }
+.download-btn:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.download-btn:disabled { opacity: .5; cursor: not-allowed; filter: none; box-shadow: none; }
+.spinner {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 2.5px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.download-btn.loading .spinner { display: block; }
+.download-btn.loading .btn-text { display: none; }
+.download-btn.loading .btn-icon { display: none; }
 
-.error{
-  min-height:1.2em;
-  font-size:0.8125rem;
-  color:var(--error);
-  text-align:center;
+.btn-icon { display: inline-flex; width: 20px; height: 20px; flex-shrink: 0; color: #fff; }
+
+/* Error */
+.error {
+  min-height: 1.4em;
+  font-size: .82rem;
+  color: var(--error);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 8px 12px;
+  background: var(--error-bg);
+  border-radius: var(--radius);
+  border: 1px solid rgba(239,68,68,.2);
 }
-.error:empty{display:none}
+.error:empty { display: none; }
+.error svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 /* Info grid */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
-.card-icons{display:flex;gap:8px;margin-bottom:8px}
-.card-icons svg{width:20px;height:20px}
-.card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px}
-.card p{font-size:0.875rem;color:var(--muted)}
-@media(max-width:520px){.info-grid{grid-template-columns:1fr}}
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.card:hover { border-color: var(--primary-dim); transform: translateY(-2px); }
+.card-icons { display: flex; gap: 10px; margin-bottom: 12px; }
+.card-icons svg { width: 22px; height: 22px; flex-shrink: 0; }
+.card h3 {
+  font-family: var(--font-display);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.card p { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+@media (max-width: 520px) { .info-grid { grid-template-columns: 1fr; } }
 
 /* Recent */
-.recent{display:flex;flex-direction:column;gap:10px}
-.recent-header{display:flex;align-items:center;justify-content:space-between}
-.recent-title{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.recent-clear{background:none;border:none;font-family:inherit;font-size:0.8125rem;color:var(--muted);cursor:pointer;padding:2px 4px}
-.recent-clear:hover{color:var(--text)}
-.recent-list{list-style:none;display:flex;flex-direction:column;gap:8px}
-.recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;min-width:0}
-.recent-icon{width:16px;height:16px;flex:none;display:inline-flex}
-.recent-icon svg{width:16px;height:16px}
-.recent-url{flex:1;min-width:0;font-size:0.8125rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.recent-redl{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:inline-flex;flex:none}
-.recent-redl:hover{color:var(--text)}
-.recent-redl svg{width:16px;height:16px}
-.recent-empty{text-align:center;font-size:0.8125rem;color:var(--muted);padding:8px 0}
+.recent { display: flex; flex-direction: column; gap: 12px; }
+.recent-header { display: flex; align-items: center; justify-content: space-between; }
+.recent-title {
+  font-family: var(--font-display);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--muted-dim);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.recent-clear {
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: .82rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: color var(--transition), background var(--transition);
+}
+.recent-clear:hover { color: var(--text); background: var(--surface); }
+.recent-clear:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.recent-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  min-width: 0;
+  transition: border-color var(--transition), background var(--transition);
+}
+.recent-item:hover { border-color: var(--primary-dim); }
+.recent-icon { width: 20px; height: 20px; flex-shrink: 0; display: inline-flex; }
+.recent-icon svg { width: 20px; height: 20px; }
+.recent-url { flex: 1; min-width: 0; font-size: .82rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-redl {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  display: inline-flex;
+  flex-shrink: 0;
+  border-radius: 10px;
+  transition: color var(--transition), background var(--transition);
+}
+.recent-redl:hover { color: var(--primary-bright); background: var(--primary-dim); }
+.recent-redl:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.recent-redl svg { width: 18px; height: 18px; }
+.recent-empty { text-align: center; font-size: .82rem; color: var(--muted); padding: 16px 0; }
 
 /* Footer */
-.footer{text-align:center;font-size:0.75rem;color:var(--muted);margin-top:8px}
+.footer { text-align: center; font-size: .72rem; color: var(--muted-dim); margin-top: 8px; padding-top: 16px; border-top: 1px solid var(--border); }
 
 /* Focus visible */
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible { outline: none; box-shadow: var(--focus-ring); outline-offset: 2px; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-dim); }
+
+/* Icon inline SVGs */
+.icon-link, .icon-download, .icon-play, .icon-arrow-out, .icon-video, .icon-music, .icon-error, .icon-close, .icon-replay, .icon-globe { display: inline-block; width: 1em; height: 1em; vertical-align: middle; flex-shrink: 0; color: currentColor; }
 </style>
 </head>
 <body>
@@ -173,64 +362,68 @@ main{
     <h1 id="brand-name" class="brand">KiPiPs</h1>
     <p class="tagline">Download anything. No ads. No limits.</p>
     <div class="badges" id="badges" aria-label="Supported platforms">
-      <span class="badge" data-platform="tiktok"><span data-icon="tiktok"></span>TikTok</span>
-      <span class="badge" data-platform="instagram"><span data-icon="instagram"></span>Instagram</span>
-      <span class="badge" data-platform="youtube"><span data-icon="youtube"></span>YouTube</span>
-      <span class="badge" data-platform="facebook"><span data-icon="facebook"></span>Facebook</span>
-      <span class="badge" data-platform="x"><span data-icon="x"></span>X</span>
-      <span class="badge" data-platform="spotify"><span data-icon="spotify"></span>Spotify</span>
+      <span class="badge" data-platform="tiktok" data-icon="tiktok">TikTok</span>
+      <span class="badge" data-platform="instagram" data-icon="instagram">Instagram</span>
+      <span class="badge" data-platform="youtube" data-icon="youtube">YouTube</span>
+      <span class="badge" data-platform="facebook" data-icon="facebook">Facebook</span>
+      <span class="badge" data-platform="x" data-icon="x">X</span>
+      <span class="badge" data-platform="spotify" data-icon="spotify">Spotify</span>
     </div>
   </section>
 
   <section class="composer" aria-label="Download composer">
-    <label class="sr-only" for="urlInput">Link</label>
-    <input id="urlInput" class="url-input" type="text" placeholder="Paste link here..." autocomplete="off" spellcheck="false" inputmode="url" enterkeyhint="go">
+    <div class="url-input-wrapper">
+      <svg class="url-input-icon icon-link" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15l6-6"/><path d="M11 6l.463-.536a5 5 0 0 1 7.071 7.072l-.534.464"/><path d="M13 18l-.397.534a5.068 5.068 0 0 1-7.127 0a4.972 4.972 0 0 1 0-7.071l.524-.463"/></svg>
+      <label class="sr-only" for="urlInput">Paste a video or music link</label>
+      <input id="urlInput" class="url-input" type="text" placeholder="Paste link here..." autocomplete="off" spellcheck="false" inputmode="url" enterkeyhint="go">
+    </div>
     <div class="format-selector" id="formatSelector" aria-label="Format options"></div>
-    <button id="downloadBtn" class="download-btn" type="button" disabled>
+    <button id="downloadBtn" class="download-btn" type="button" disabled aria-label="Download">
       <span class="spinner" aria-hidden="true"></span>
+      <svg class="btn-icon icon-download" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/><path d="M7 11l5 5 5-5"/><path d="M12 4v12"/></svg>
       <span class="btn-text">Download</span>
     </button>
-    <p class="error" id="errorEl" role="alert"></p>
+    <p class="error" id="errorEl" role="alert" aria-live="polite"></p>
   </section>
 
   <section class="info-grid" aria-label="What you can download">
     <article class="card">
       <div class="card-icons">
-        <span data-icon="tiktok"></span>
-        <span data-icon="instagram"></span>
+        <svg data-icon="tiktok" aria-hidden="true"></svg>
+        <svg data-icon="instagram" aria-hidden="true"></svg>
       </div>
       <h3>Short-form & Stories</h3>
       <p>Video, Reels, TikTok posts, IG carousels — all formats.</p>
     </article>
     <article class="card">
-      <div class="card-icons"><span data-icon="youtube"></span></div>
+      <div class="card-icons"><svg data-icon="youtube" aria-hidden="true"></svg></div>
       <h3>YouTube</h3>
       <p>Video up to 1080p or MP3 audio. Any public video.</p>
     </article>
     <article class="card">
       <div class="card-icons">
-        <span data-icon="x"></span>
-        <span data-icon="facebook"></span>
+        <svg data-icon="x" aria-hidden="true"></svg>
+        <svg data-icon="facebook" aria-hidden="true"></svg>
       </div>
       <h3>Social feeds</h3>
       <p>Tweets with video, Facebook Watch, public posts.</p>
     </article>
     <article class="card">
-      <div class="card-icons"><span data-icon="spotify"></span></div>
+      <div class="card-icons"><svg data-icon="spotify" aria-hidden="true"></svg></div>
       <h3>Spotify</h3>
-      <p>Single tracks to MP3. No playlist support.</p>
+      <p>Single tracks to MP3. Playlist support.</p>
     </article>
   </section>
 
   <section class="recent" aria-label="Recent downloads">
     <div class="recent-header">
       <h2 class="recent-title">Recent</h2>
-      <button class="recent-clear" id="recentClear" type="button">Clear</button>
+      <button class="recent-clear" id="recentClear" type="button" aria-label="Clear history">Clear</button>
     </div>
     <ul class="recent-list" id="recentList" role="list"></ul>
   </section>
 
-  <footer class="footer">KiPiPs — free forever. Powered by Cobalt.</footer>
+  <footer class="footer">KiPiPs — free forever. Powered by Cobalt & Invidious.</footer>
 </main>
 
 <script>
@@ -245,10 +438,7 @@ const ICONS = {
 };
 const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>';
 
-// Inject icons into all [data-icon] elements
-document.querySelectorAll('[data-icon]').forEach(el => {
-  el.innerHTML = ICONS[el.dataset.icon] || '';
-});
+document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = ICONS[el.dataset.icon] || ''; });
 
 // ==== Platform detection ====
 const PLATFORM_PATTERNS = [
@@ -268,9 +458,7 @@ function detectPlatform(input) {
     const url = new URL(/^https?:\/\//i.test(raw) ? raw : 'https://' + raw);
     host = url.hostname.toLowerCase();
   } catch { host = raw.toLowerCase(); }
-  for (const p of PLATFORM_PATTERNS) {
-    if (p.test(host)) return p.key;
-  }
+  for (const p of PLATFORM_PATTERNS) { if (p.test(host)) return p.key; }
   return null;
 }
 
@@ -302,23 +490,13 @@ attachListeners();
 
 // ==== Listeners ====
 function attachListeners() {
-  // URL input
   urlInput.addEventListener('input', debounce(handleUrlInput, 150));
   urlInput.addEventListener('paste', () => setTimeout(handleUrlInput, 0));
   urlInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !downloadBtn.disabled) {
-      e.preventDefault();
-      doDownload();
-    }
+    if (e.key === 'Enter' && !downloadBtn.disabled) { e.preventDefault(); doDownload(); }
   });
-
-  // Download
   downloadBtn.addEventListener('click', doDownload);
-
-  // Recent clear
   recentClear.addEventListener('click', clearRecent);
-
-  // Re-download delegation
   recentList.addEventListener('click', e => {
     const btn = e.target.closest('.recent-redl');
     if (!btn) return;
@@ -334,21 +512,11 @@ function handleUrlInput() {
   const p = detectPlatform(urlInput.value);
   platform = p;
   highlightBadge(p);
-
-  if (p) {
-    buildFormatSelector(p);
-    showFormatSelector();
-    downloadBtn.disabled = false;
-  } else {
-    hideFormatSelector();
-    downloadBtn.disabled = true;
-  }
+  if (p) { buildFormatSelector(p); showFormatSelector(); downloadBtn.disabled = false; }
+  else { hideFormatSelector(); downloadBtn.disabled = true; }
 }
-
 function highlightBadge(key) {
-  badges.querySelectorAll('.badge').forEach(b => {
-    b.classList.toggle('active', b.dataset.platform === key);
-  });
+  badges.querySelectorAll('.badge').forEach(b => { b.classList.toggle('active', b.dataset.platform === key); });
 }
 
 // ==== Format selector ====
@@ -359,85 +527,43 @@ function buildFormatSelector(p) {
   formatSelector.innerHTML = '';
   const isSpotify = p === 'spotify';
   const isIg = p === 'instagram';
-
-  // Video quality row (hidden for Spotify)
   if (!isSpotify) {
-    const row = document.createElement('div');
-    row.className = 'fmt-row';
+    const row = document.createElement('div'); row.className = 'fmt-row';
     row.appendChild(span('fmt-label', 'Quality'));
-    const pills = document.createElement('div');
-    pills.className = 'fmt-pills';
+    const pills = document.createElement('div'); pills.className = 'fmt-pills';
     QUALITIES.forEach(([label, val]) => {
       const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'pill' + (quality === val && !isAudio ? ' active' : '');
-      b.textContent = label;
-      b.dataset.q = val;
-      b.addEventListener('click', () => {
-        quality = val;
-        isAudio = false;
-        mode = 'video';
-        markActive();
-      });
-      qPills.push(b);
-      pills.appendChild(b);
+      b.type = 'button'; b.className = 'pill' + (quality === val && !isAudio ? ' active' : '');
+      b.textContent = label; b.dataset.q = val;
+      b.addEventListener('click', () => { quality = val; isAudio = false; mode = 'video'; markActive(); });
+      qPills.push(b); pills.appendChild(b);
     });
-    row.appendChild(pills);
-    formatSelector.appendChild(row);
+    row.appendChild(pills); formatSelector.appendChild(row);
   }
-
-  // Audio row
-  const arow = document.createElement('div');
-  arow.className = 'fmt-row';
+  const arow = document.createElement('div'); arow.className = 'fmt-row';
   arow.appendChild(span('fmt-label', 'Audio'));
   mp3Btn = document.createElement('button');
   mp3Btn.type = 'button';
   mp3Btn.className = 'pill' + (isSpotify || isAudio ? ' active' : '');
   mp3Btn.textContent = 'MP3';
-  if (isSpotify) {
-    mp3Btn.setAttribute('aria-disabled', 'true');
-  } else {
-    mp3Btn.addEventListener('click', () => {
-      isAudio = !isAudio;
-      mode = isAudio ? 'audio' : 'video';
-      markActive();
-    });
-  }
-  arow.appendChild(mp3Btn);
-  formatSelector.appendChild(arow);
-
-  // Images button for Instagram
+  if (isSpotify) { mp3Btn.setAttribute('aria-disabled', 'true'); }
+  else { mp3Btn.addEventListener('click', () => { isAudio = !isAudio; mode = isAudio ? 'audio' : 'video'; markActive(); }); }
+  arow.appendChild(mp3Btn); formatSelector.appendChild(arow);
   if (isIg) {
-    const irow = document.createElement('div');
-    irow.className = 'fmt-row fmt-row-images';
+    const irow = document.createElement('div'); irow.className = 'fmt-row fmt-row-images';
     const ib = document.createElement('button');
-    ib.type = 'button';
-    ib.className = 'pill pill-images';
-    ib.textContent = 'Download Images';
+    ib.type = 'button'; ib.className = 'pill pill-images'; ib.textContent = 'Download Images';
     ib.addEventListener('click', () => doDownload('images'));
-    irow.appendChild(ib);
-    formatSelector.appendChild(irow);
+    irow.appendChild(ib); formatSelector.appendChild(irow);
   }
-
   markActive();
 }
-
 function markActive() {
   qPills.forEach(b => b.classList.toggle('active', !isAudio && b.dataset.q === quality));
   if (mp3Btn) mp3Btn.classList.toggle('active', isAudio);
 }
-
-function showFormatSelector() {
-  formatSelector.hidden = false;
-  requestAnimationFrame(() => formatSelector.classList.add('visible'));
-}
-
-function hideFormatSelector() {
-  formatSelector.classList.remove('visible');
-  requestAnimationFrame(() => {
-    if (!formatSelector.classList.contains('visible')) formatSelector.hidden = true;
-  });
-}
+function showFormatSelector() { formatSelector.hidden = false; requestAnimationFrame(() => formatSelector.classList.add('visible')); }
+function hideFormatSelector() { formatSelector.classList.remove('visible'); requestAnimationFrame(() => { if (!formatSelector.classList.contains('visible')) formatSelector.hidden = true; }); }
 
 // ==== Download ====
 const INVIDIOUS_API = 'https://yt.chocolatemoo53.com';
@@ -447,14 +573,13 @@ async function doDownload(forceMode) {
   if (loading) return;
   const inputUrl = urlInput.value.trim();
   if (!inputUrl || !platform) return;
-
   const m = forceMode || mode;
   const audio = m === 'audio' || platform === 'spotify';
 
   loading = true;
   downloadBtn.classList.add('loading');
   downloadBtn.disabled = true;
-  btnText.textContent = 'Fetching...';
+  btnText.textContent = 'Fetching…';
   clearError();
 
   try {
@@ -462,20 +587,13 @@ async function doDownload(forceMode) {
     let isPlaylist = false;
     let playlistTracks = [];
 
-    if (platform === 'youtube') {
-      downloadUrl = await downloadYouTube(inputUrl, audio);
-    } else if (platform === 'tiktok') {
-      downloadUrl = await downloadTikTok(inputUrl);
-    } else if (platform === 'spotify') {
+    if (platform === 'youtube') { downloadUrl = await downloadYouTube(inputUrl, audio); }
+    else if (platform === 'tiktok') { downloadUrl = await downloadTikTok(inputUrl); }
+    else if (platform === 'spotify') {
       const result = await downloadSpotify(inputUrl, audio);
-      if (result.tracks && result.tracks.length > 1) {
-        isPlaylist = true;
-        playlistTracks = result.tracks;
-      } else if (result.url) {
-        downloadUrl = result.url;
-      }
+      if (result.tracks && result.tracks.length > 1) { isPlaylist = true; playlistTracks = result.tracks; }
+      else if (result.url) { downloadUrl = result.url; }
     } else {
-      // Instagram, Facebook, X - fallback to cobalt.tools
       const params = new URLSearchParams({ url: inputUrl });
       if (audio) params.set('audio', '1');
       if (quality !== 'max') params.set('quality', quality);
@@ -485,14 +603,11 @@ async function doDownload(forceMode) {
     }
 
     if (isPlaylist && playlistTracks.length > 0) {
-      btnText.textContent = `Downloading ${playlistTracks.length} tracks...`;
+      btnText.textContent = `Opening ${playlistTracks.length} tracks…`;
       for (let i = 0; i < playlistTracks.length; i++) {
         const track = playlistTracks[i];
         const trackUrl = await searchYouTubeAndGetAudio(track);
-        if (trackUrl) {
-          window.open(trackUrl, '_blank', 'noopener,noreferrer');
-          await new Promise(r => setTimeout(r, 500));
-        }
+        if (trackUrl) { window.open(trackUrl, '_blank', 'noopener,noreferrer'); await new Promise(r => setTimeout(r, 500)); }
       }
       addToRecent(inputUrl, platform);
       showInlineError(`Opened ${playlistTracks.length} tracks in new tabs`);
@@ -502,33 +617,22 @@ async function doDownload(forceMode) {
     } else {
       showInlineError('Could not get download link. Try cobalt.tools manually.');
     }
-  } catch (err) {
-    console.error(err);
-    showInlineError('Download failed. Try: cobalt.tools directly.');
-  } finally {
-    loading = false;
-    downloadBtn.classList.remove('loading');
-    downloadBtn.disabled = false;
-    btnText.textContent = 'Download';
-  }
+  } catch (err) { console.error(err); showInlineError('Download failed. Try: cobalt.tools directly.'); }
+  finally { loading = false; downloadBtn.classList.remove('loading'); downloadBtn.disabled = false; btnText.textContent = 'Download'; }
 }
 
 async function downloadYouTube(url, audioOnly) {
   const videoId = extractYouTubeId(url);
   if (!videoId) return null;
-
   const res = await fetch(`${INVIDIOUS_API}/api/v1/videos/${videoId}`);
   if (!res.ok) throw new Error('Invidious API error');
   const data = await res.json();
-
-  if (audioOnly) {
-    const audioFormat = data.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
-    return audioFormat?.url || null;
-  } else {
-    const qualityMap = { max: ['137', '248', '399'], '1080': ['137', '248'], '720': ['136', '247'], '480': ['135', '244'] };
+  if (audioOnly) { const f = data.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url); return f?.url || null; }
+  else {
+    const qualityMap = { max: ['137','248','399'], '1080': ['137','248'], '720': ['136','247'], '480': ['135','244'] };
     const itags = qualityMap[quality] || qualityMap.max;
-    const videoFormat = data.adaptiveFormats?.find(f => itags.includes(f.itag?.toString()) && f.url);
-    return videoFormat?.url || null;
+    const f = data.adaptiveFormats?.find(f => itags.includes(f.itag?.toString()) && f.url);
+    return f?.url || null;
   }
 }
 
@@ -536,26 +640,15 @@ async function downloadTikTok(url) {
   const res = await fetch(`${TIKWM_API}?url=${encodeURIComponent(url)}`);
   if (!res.ok) throw new Error('TikWM API error');
   const data = await res.json();
-  if (data.code === 0 && data.data) {
-    return data.data.play || data.data.wmplay || data.data.hdplay || null;
-  }
+  if (data.code === 0 && data.data) { return data.data.play || data.data.wmplay || data.data.hdplay || null; }
   return null;
 }
 
 async function downloadSpotify(url, audioOnly) {
   const playlistId = extractSpotifyPlaylistId(url);
   const trackId = extractSpotifyTrackId(url);
-
-  if (playlistId) {
-    const tracks = await fetchSpotifyPlaylist(playlistId);
-    return { tracks };
-  } else if (trackId) {
-    const trackInfo = await fetchSpotifyTrack(trackId);
-    if (trackInfo) {
-      const ytUrl = await searchYouTubeAndGetAudio(trackInfo);
-      return { url: ytUrl };
-    }
-  }
+  if (playlistId) { const tracks = await fetchSpotifyPlaylist(playlistId); return { tracks }; }
+  else if (trackId) { const info = await fetchSpotifyTrack(trackId); if (info) { const ytUrl = await searchYouTubeAndGetAudio(info); return { url: ytUrl }; } }
   return {};
 }
 
@@ -564,22 +657,11 @@ function extractYouTubeId(url) {
     /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
     /^([a-zA-Z0-9_-]{11})$/
   ];
-  for (const p of patterns) {
-    const m = url.match(p);
-    if (m) return m[1];
-  }
+  for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
   return null;
 }
-
-function extractSpotifyPlaylistId(url) {
-  const m = url.match(/spotify\.com\/playlist\/([a-zA-Z0-9]+)/);
-  return m ? m[1] : null;
-}
-
-function extractSpotifyTrackId(url) {
-  const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
-  return m ? m[1] : null;
-}
+function extractSpotifyPlaylistId(url) { const m = url.match(/spotify\.com\/playlist\/([a-zA-Z0-9]+)/); return m ? m[1] : null; }
+function extractSpotifyTrackId(url) { const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/); return m ? m[1] : null; }
 
 async function fetchSpotifyPlaylist(playlistId) {
   const res = await fetch(`https://open.spotify.com/embed/playlist/${playlistId}`);
@@ -588,118 +670,61 @@ async function fetchSpotifyPlaylist(playlistId) {
   if (!match) return [];
   const data = JSON.parse(match[1]);
   const trackList = data.props?.pageProps?.state?.data?.entity?.trackList || [];
-  return trackList.map(t => ({
-    title: t.title,
-    artist: t.subtitle,
-    query: `${t.title} ${t.subtitle}`
-  }));
+  return trackList.map(t => ({ title: t.title, artist: t.subtitle, query: `${t.title} ${t.subtitle}` }));
 }
-
 async function fetchSpotifyTrack(trackId) {
   const res = await fetch(`https://open.spotify.com/embed/track/${trackId}`);
   const html = await res.text();
   const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
   if (!match) return null;
   const data = JSON.parse(match[1]);
-  const entity = data.props?.pageProps?.state?.data?.entity;
-  if (!entity) return null;
-  return {
-    title: entity.title,
-    artist: entity.subtitle,
-    query: `${entity.title} ${entity.subtitle}`
-  };
+  const e = data.props?.pageProps?.state?.data?.entity;
+  if (!e) return null;
+  return { title: e.title, artist: e.subtitle, query: `${e.title} ${e.subtitle}` };
 }
-
 async function searchYouTubeAndGetAudio(track) {
-  const query = encodeURIComponent(track.query);
-  const res = await fetch(`${INVIDIOUS_API}/api/v1/search?q=${query}&type=video`);
+  const q = encodeURIComponent(track.query);
+  const res = await fetch(`${INVIDIOUS_API}/api/v1/search?q=${q}&type=video`);
   if (!res.ok) return null;
   const data = await res.json();
-  const firstVideo = data[0];
-  if (!firstVideo?.videoId) return null;
-
-  const videoRes = await fetch(`${INVIDIOUS_API}/api/v1/videos/${firstVideo.videoId}`);
-  if (!videoRes.ok) return null;
-  const videoData = await videoRes.json();
-  const audioFormat = videoData.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
-  return audioFormat?.url || null;
+  const v = data[0];
+  if (!v?.videoId) return null;
+  const vr = await fetch(`${INVIDIOUS_API}/api/v1/videos/${v.videoId}`);
+  if (!vr.ok) return null;
+  const vd = await vr.json();
+  const f = vd.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
+  return f?.url || null;
 }
 
 function showInlineError(msg) {
-  errorEl.textContent = msg;
+  const icon = '<svg class="icon-error" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+  errorEl.innerHTML = icon + msg;
 }
-
-function clearError() {
-  errorEl.textContent = '';
-}
+function clearError() { errorEl.textContent = ''; }
 
 // ==== Recent downloads ====
-function loadRecent() {
-  try {
-    const stored = localStorage.getItem(RECENT_KEY);
-    recent = stored ? JSON.parse(stored) : [];
-  } catch { recent = []; }
-}
-
-function saveRecent() {
-  try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 5)));
-  } catch {}
-}
-
-function addToRecent(url, platform) {
-  recent = [{ url, platform, ts: Date.now() }, ...recent.filter(r => r.url !== url)].slice(0, 5);
-  saveRecent();
-  renderRecent();
-}
-
-function clearRecent() {
-  recent = [];
-  localStorage.removeItem(RECENT_KEY);
-  renderRecent();
-}
-
+function loadRecent() { try { const s = localStorage.getItem(RECENT_KEY); recent = s ? JSON.parse(s) : []; } catch { recent = []; } }
+function saveRecent() { try { localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 5))); } catch {} }
+function addToRecent(url, platform) { recent = [{ url, platform, ts: Date.now() }, ...recent.filter(r => r.url !== url)].slice(0, 5); saveRecent(); renderRecent(); }
+function clearRecent() { recent = []; localStorage.removeItem(RECENT_KEY); renderRecent(); }
 function renderRecent() {
   recentList.innerHTML = '';
   if (!recent.length) {
-    const li = document.createElement('li');
-    li.className = 'recent-empty';
-    li.textContent = 'Nothing yet — paste a link above.';
-    recentList.appendChild(li);
-    return;
+    const li = document.createElement('li'); li.className = 'recent-empty'; li.textContent = 'Nothing yet — paste a link above.';
+    recentList.appendChild(li); return;
   }
   recent.forEach(item => {
-    const li = document.createElement('li');
-    li.className = 'recent-item';
-    const ic = document.createElement('span');
-    ic.className = 'recent-icon';
-    ic.innerHTML = ICONS[item.platform] || ICONS.x;
-    const u = document.createElement('span');
-    u.className = 'recent-url';
-    u.textContent = item.url;
-    u.title = item.url;
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'recent-redl';
-    btn.setAttribute('aria-label', 'Download again: ' + item.url);
-    btn.dataset.url = item.url;
-    btn.innerHTML = ARROW;
-    li.append(ic, u, btn);
-    recentList.appendChild(li);
+    const li = document.createElement('li'); li.className = 'recent-item';
+    const ic = document.createElement('span'); ic.className = 'recent-icon'; ic.innerHTML = ICONS[item.platform] || ICONS.x;
+    const u = document.createElement('span'); u.className = 'recent-url'; u.textContent = item.url; u.title = item.url;
+    const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'recent-redl'; btn.setAttribute('aria-label', 'Download again: ' + item.url); btn.dataset.url = item.url; btn.innerHTML = ARROW;
+    li.append(ic, u, btn); recentList.appendChild(li);
   });
 }
 
 // ==== Utils ====
-function debounce(fn, ms) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-function span(className, text) {
-  const el = document.createElement('span');
-  el.className = className;
-  el.textContent = text;
-  return el;
-}
+function debounce(fn, ms) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; }
+function span(className, text) { const el = document.createElement('span'); el.className = className; el.textContent = text; return el; }
 </script>
 </body>
 </html>
