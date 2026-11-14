@@ -440,6 +440,9 @@ function hideFormatSelector() {
 }
 
 // ==== Download ====
+const INVIDIOUS_API = 'https://yt.chocolatemoo53.com';
+const TIKWM_API = 'https://tikwm.com/api/';
+
 async function doDownload(forceMode) {
   if (loading) return;
   const inputUrl = urlInput.value.trim();
@@ -451,23 +454,175 @@ async function doDownload(forceMode) {
   loading = true;
   downloadBtn.classList.add('loading');
   downloadBtn.disabled = true;
-  btnText.textContent = 'Opening...';
+  btnText.textContent = 'Fetching...';
   clearError();
 
   try {
-    const params = new URLSearchParams({ url: inputUrl });
-    if (audio) params.set('audio', '1');
-    if (quality !== 'max') params.set('quality', quality);
-    window.open('https://cobalt.tools/?' + params.toString(), '_blank', 'noopener,noreferrer');
-    addToRecent(inputUrl, platform);
+    let downloadUrl = null;
+    let isPlaylist = false;
+    let playlistTracks = [];
+
+    if (platform === 'youtube') {
+      downloadUrl = await downloadYouTube(inputUrl, audio);
+    } else if (platform === 'tiktok') {
+      downloadUrl = await downloadTikTok(inputUrl);
+    } else if (platform === 'spotify') {
+      const result = await downloadSpotify(inputUrl, audio);
+      if (result.tracks && result.tracks.length > 1) {
+        isPlaylist = true;
+        playlistTracks = result.tracks;
+      } else if (result.url) {
+        downloadUrl = result.url;
+      }
+    } else {
+      // Instagram, Facebook, X - fallback to cobalt.tools
+      const params = new URLSearchParams({ url: inputUrl });
+      if (audio) params.set('audio', '1');
+      if (quality !== 'max') params.set('quality', quality);
+      window.open('https://cobalt.tools/?' + params.toString(), '_blank', 'noopener,noreferrer');
+      addToRecent(inputUrl, platform);
+      return;
+    }
+
+    if (isPlaylist && playlistTracks.length > 0) {
+      btnText.textContent = `Downloading ${playlistTracks.length} tracks...`;
+      for (let i = 0; i < playlistTracks.length; i++) {
+        const track = playlistTracks[i];
+        const trackUrl = await searchYouTubeAndGetAudio(track);
+        if (trackUrl) {
+          window.open(trackUrl, '_blank', 'noopener,noreferrer');
+          await new Promise(r => setTimeout(r, 500));
+        }
+      }
+      addToRecent(inputUrl, platform);
+      showInlineError(`Opened ${playlistTracks.length} tracks in new tabs`);
+    } else if (downloadUrl) {
+      window.open(downloadUrl, '_blank', 'noopener,noreferrer');
+      addToRecent(inputUrl, platform);
+    } else {
+      showInlineError('Could not get download link. Try cobalt.tools manually.');
+    }
   } catch (err) {
-    showInlineError('Could not open Cobalt. Try manually: cobalt.tools');
+    console.error(err);
+    showInlineError('Download failed. Try: cobalt.tools directly.');
   } finally {
     loading = false;
     downloadBtn.classList.remove('loading');
     downloadBtn.disabled = false;
     btnText.textContent = 'Download';
   }
+}
+
+async function downloadYouTube(url, audioOnly) {
+  const videoId = extractYouTubeId(url);
+  if (!videoId) return null;
+
+  const res = await fetch(`${INVIDIOUS_API}/api/v1/videos/${videoId}`);
+  if (!res.ok) throw new Error('Invidious API error');
+  const data = await res.json();
+
+  if (audioOnly) {
+    const audioFormat = data.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
+    return audioFormat?.url || null;
+  } else {
+    const qualityMap = { max: ['137', '248', '399'], '1080': ['137', '248'], '720': ['136', '247'], '480': ['135', '244'] };
+    const itags = qualityMap[quality] || qualityMap.max;
+    const videoFormat = data.adaptiveFormats?.find(f => itags.includes(f.itag?.toString()) && f.url);
+    return videoFormat?.url || null;
+  }
+}
+
+async function downloadTikTok(url) {
+  const res = await fetch(`${TIKWM_API}?url=${encodeURIComponent(url)}`);
+  if (!res.ok) throw new Error('TikWM API error');
+  const data = await res.json();
+  if (data.code === 0 && data.data) {
+    return data.data.play || data.data.wmplay || data.data.hdplay || null;
+  }
+  return null;
+}
+
+async function downloadSpotify(url, audioOnly) {
+  const playlistId = extractSpotifyPlaylistId(url);
+  const trackId = extractSpotifyTrackId(url);
+
+  if (playlistId) {
+    const tracks = await fetchSpotifyPlaylist(playlistId);
+    return { tracks };
+  } else if (trackId) {
+    const trackInfo = await fetchSpotifyTrack(trackId);
+    if (trackInfo) {
+      const ytUrl = await searchYouTubeAndGetAudio(trackInfo);
+      return { url: ytUrl };
+    }
+  }
+  return {};
+}
+
+function extractYouTubeId(url) {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function extractSpotifyPlaylistId(url) {
+  const m = url.match(/spotify\.com\/playlist\/([a-zA-Z0-9]+)/);
+  return m ? m[1] : null;
+}
+
+function extractSpotifyTrackId(url) {
+  const m = url.match(/spotify\.com\/track\/([a-zA-Z0-9]+)/);
+  return m ? m[1] : null;
+}
+
+async function fetchSpotifyPlaylist(playlistId) {
+  const res = await fetch(`https://open.spotify.com/embed/playlist/${playlistId}`);
+  const html = await res.text();
+  const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!match) return [];
+  const data = JSON.parse(match[1]);
+  const trackList = data.props?.pageProps?.state?.data?.entity?.trackList || [];
+  return trackList.map(t => ({
+    title: t.title,
+    artist: t.subtitle,
+    query: `${t.title} ${t.subtitle}`
+  }));
+}
+
+async function fetchSpotifyTrack(trackId) {
+  const res = await fetch(`https://open.spotify.com/embed/track/${trackId}`);
+  const html = await res.text();
+  const match = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/);
+  if (!match) return null;
+  const data = JSON.parse(match[1]);
+  const entity = data.props?.pageProps?.state?.data?.entity;
+  if (!entity) return null;
+  return {
+    title: entity.title,
+    artist: entity.subtitle,
+    query: `${entity.title} ${entity.subtitle}`
+  };
+}
+
+async function searchYouTubeAndGetAudio(track) {
+  const query = encodeURIComponent(track.query);
+  const res = await fetch(`${INVIDIOUS_API}/api/v1/search?q=${query}&type=video`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const firstVideo = data[0];
+  if (!firstVideo?.videoId) return null;
+
+  const videoRes = await fetch(`${INVIDIOUS_API}/api/v1/videos/${firstVideo.videoId}`);
+  if (!videoRes.ok) return null;
+  const videoData = await videoRes.json();
+  const audioFormat = videoData.adaptiveFormats?.find(f => f.type?.startsWith('audio/') && f.url);
+  return audioFormat?.url || null;
 }
 
 function showInlineError(msg) {
