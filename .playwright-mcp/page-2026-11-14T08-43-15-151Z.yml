@@ -1,0 +1,33 @@
+- generic [ref=e4]:
+  - navigation "tabs panel" [ref=e5]:
+    - tablist [ref=e7]:
+      - generic [ref=e8]:
+        - tab "save" [selected] [ref=e9]
+        - tab "beta remux" [ref=e11] [cursor=pointer]:
+          - generic "beta" [ref=e12]: β
+          - generic [ref=e13]: remux
+      - generic [ref=e14]:
+        - tab "settings" [ref=e15] [cursor=pointer]
+        - tab "donate" [ref=e17] [cursor=pointer]
+        - tab "updates" [ref=e19] [cursor=pointer]
+        - tab "about" [ref=e21] [cursor=pointer]
+  - button "processing queue" [ref=e23] [cursor=pointer]
+  - generic [ref=e26]:
+    - button "show supported services" [ref=e28] [cursor=pointer]:
+      - generic [ref=e30]: supported services
+    - main [active] [ref=e31]:
+      - generic [ref=e32]:
+        - generic [aria-hidden] [ref=e33]:
+          - generic: cloudflare turnstile is checking if you're not a bot, please wait!
+        - textbox "link input area. checking if you're not a robot." [ref=e35]:
+          - /placeholder: paste the link here
+        - generic [ref=e36]:
+          - listbox [ref=e38]:
+            - button "auto" [pressed]
+            - button "audio" [ref=e39] [cursor=pointer]
+            - button "mute" [ref=e40] [cursor=pointer]
+          - button "paste" [ref=e41] [cursor=pointer]
+    - generic [ref=e43]:
+      - text: by continuing, you agree to
+      - link "terms and ethics of use" [ref=e44] [cursor=pointer]:
+        - /url: /about/terms

@@ -451,37 +451,22 @@ async function doDownload(forceMode) {
   loading = true;
   downloadBtn.classList.add('loading');
   downloadBtn.disabled = true;
-  btnText.textContent = 'Fetching...';
+  btnText.textContent = 'Opening...';
   clearError();
 
   try {
-    const res = await fetch('https://cobalt.tools/api/json', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        url: inputUrl,
-        vQuality: quality,
-        aFormat: 'mp3',
-        isAudioOnly: audio,
-        disableMetadata: false
-      })
-    })
-    const data = await res.json()
-    if (data.status === 'stream' || data.status === 'redirect' || data.status === 'tunnel') {
-      window.open(data.url, '_blank')
-    } else {
-      showInlineError(data.text || 'Could not resolve download link.')
-    }
+    const params = new URLSearchParams({ url: inputUrl });
+    if (audio) params.set('audio', '1');
+    if (quality !== 'max') params.set('quality', quality);
+    window.open('https://cobalt.tools/?' + params.toString(), '_blank', 'noopener,noreferrer');
+    addToRecent(inputUrl, platform);
   } catch (err) {
-    showInlineError('Could not reach Cobalt API. Try: cobalt.tools directly.')
+    showInlineError('Could not open Cobalt. Try manually: cobalt.tools');
   } finally {
-    loading = false
-    downloadBtn.classList.remove('loading')
-    downloadBtn.disabled = false
-    btnText.textContent = 'Download'
+    loading = false;
+    downloadBtn.classList.remove('loading');
+    downloadBtn.disabled = false;
+    btnText.textContent = 'Download';
   }
 }
 
