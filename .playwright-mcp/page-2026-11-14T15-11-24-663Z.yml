@@ -1,0 +1,57 @@
+- generic [ref=e1]:
+  - main [ref=e2]:
+    - tablist "Main navigation" [ref=e3]:
+      - tab "Download" [ref=e4] [cursor=pointer]
+      - tab "Games" [selected] [ref=e5] [cursor=pointer]
+  - tabpanel [ref=e89]:
+    - region "Games" [ref=e90]:
+      - heading "Games" [level=1] [ref=e91]
+      - paragraph [ref=e92]: Play instantly in your browser. No install. No ads.
+    - generic "Available games" [ref=e93]:
+      - article [ref=e94]:
+        - heading "Super Mario Bros" [level=3] [ref=e124]
+        - paragraph [ref=e125]: Classic side-scrolling platformer. Jump, stomp enemies, collect coins.
+        - button "Play" [active] [ref=e126] [cursor=pointer]
+      - article [ref=e127]:
+        - img [ref=e129]:
+          - generic [ref=e131]:
+            - generic [ref=e134]: "1"
+            - generic [ref=e137]: "2"
+            - generic [ref=e140]: "3"
+            - generic [ref=e144]: "1"
+            - generic [ref=e147]: "2"
+            - generic [ref=e150]: "3"
+            - generic [ref=e156]: "2"
+            - generic [ref=e159]: "3"
+            - generic [ref=e163]: 🚩
+            - generic [ref=e168]: "3"
+            - generic [ref=e173]: 💣
+            - generic [ref=e179]: 🚩
+            - generic [ref=e184]: "2"
+            - generic [ref=e192]: "2"
+        - heading "Minesweeper" [level=3] [ref=e194]
+        - paragraph [ref=e195]: Classic logic puzzle. 3 difficulties. Flag mines, clear the board.
+        - button "Play" [ref=e196] [cursor=pointer]
+      - article [ref=e197]:
+        - heading "Tic Tac Toe" [level=3] [ref=e204]
+        - paragraph [ref=e205]: vs AI (unbeatable) or vs Friend. Animated X/O. Score persists.
+        - button "Play" [ref=e206] [cursor=pointer]
+      - article [ref=e207]:
+        - heading "Tahu Bulat" [level=3] [ref=e227]
+        - paragraph [ref=e228]: Catch falling tofu in your pan. Street vendor vibes. High score saved.
+        - button "Play" [ref=e229] [cursor=pointer]
+      - article [ref=e230]:
+        - heading "Alto's Odyssey" [level=3] [ref=e257]
+        - paragraph [ref=e258]: Endless snowboarding. Parallax mountains, tricks, day/night cycle.
+        - button "Play" [ref=e259] [cursor=pointer]
+  - dialog "Super Mario Bros" [ref=e260]:
+    - button "Close game" [ref=e261] [cursor=pointer]: ✕
+    - generic [ref=e262]:
+      - generic [ref=e263]:
+        - generic [ref=e264]:
+          - text: SCORE
+          - generic [ref=e265]: "0"
+        - generic [ref=e266]:
+          - text: LIVES
+          - generic [ref=e267]: "3"
+      - paragraph [ref=e269]: "Arrow keys / WASD: Move & Jump. Space: Jump."

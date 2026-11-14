@@ -1,0 +1,36 @@
+- main [ref=f1e2]:
+  - tablist "Main navigation" [ref=f1e3]:
+    - tab "Download" [selected] [ref=f1e4] [cursor=pointer]
+    - tab "Games" [ref=f1e5] [cursor=pointer]
+  - tabpanel [ref=f1e6]:
+    - region "KiPiPs" [ref=f1e7]:
+      - heading "KiPiPs" [level=1] [ref=f1e8]
+      - paragraph [ref=f1e9]: Download anything. No ads. No limits.
+      - generic "Supported platforms" [ref=f1e10]
+    - region "Download composer" [ref=f1e33]:
+      - generic [ref=f1e34]:
+        - generic [ref=f1e35]: Paste a video or music link
+        - textbox "Paste a video or music link" [ref=f1e36]:
+          - /placeholder: Paste link here...
+      - generic "Format options" [ref=f1e37]
+      - button "Download" [disabled] [ref=f1e38]
+    - region "What you can download" [ref=f1e43]:
+      - article [ref=f1e44]:
+        - heading "Short-form & Stories" [level=3] [ref=f1e54]
+        - paragraph [ref=f1e55]: Video, Reels, TikTok posts, IG carousels — all formats.
+      - article [ref=f1e56]:
+        - heading "YouTube" [level=3] [ref=f1e62]
+        - paragraph [ref=f1e63]: Video up to 1080p or MP3 audio. Any public video.
+      - article [ref=f1e64]:
+        - heading "Social feeds" [level=3] [ref=f1e72]
+        - paragraph [ref=f1e73]: Tweets with video, Facebook Watch, public posts.
+      - article [ref=f1e74]:
+        - heading "Spotify" [level=3] [ref=f1e80]
+        - paragraph [ref=f1e81]: Single tracks to MP3. Playlist support.
+    - region "Recent downloads" [ref=f1e82]:
+      - generic [ref=f1e83]:
+        - heading "Recent" [level=2] [ref=f1e84]
+        - button "Clear history" [ref=f1e85] [cursor=pointer]: Clear
+      - list [ref=f1e86]:
+        - listitem [ref=f1e87]: Nothing yet — paste a link above.
+    - generic [ref=f1e88]: KiPiPs — free forever. Powered by Cobalt & Invidious.

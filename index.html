@@ -594,7 +594,7 @@ main {
   <div class="games-grid" id="gamesGrid" aria-label="Available games">
     <!-- Game 1: Super Mario Bros -->
     <article class="game-card" data-game="mario">
-      <div class="game-thumb" id="marioThumb" aria-hidden="true"></div>
+      <canvas class="game-thumb-canvas" id="marioThumb" width="320" height="180" aria-label="Super Mario Bros preview"></canvas>
       <h3>Super Mario Bros</h3>
       <p>Classic side-scrolling platformer. Jump, stomp enemies, collect coins.</p>
       <button class="game-play-btn" data-game="mario">Play</button>
@@ -602,7 +602,7 @@ main {
 
     <!-- Game 2: Minesweeper -->
     <article class="game-card" data-game="minesweeper">
-      <div class="game-thumb" id="minesweeperThumb" aria-hidden="true"></div>
+      <canvas class="game-thumb-canvas" id="minesweeperThumb" width="320" height="180" aria-label="Minesweeper preview"></canvas>
       <h3>Minesweeper</h3>
       <p>Classic logic puzzle. 3 difficulties. Flag mines, clear the board.</p>
       <button class="game-play-btn" data-game="minesweeper">Play</button>
@@ -610,7 +610,7 @@ main {
 
     <!-- Game 3: Tic Tac Toe -->
     <article class="game-card" data-game="tictactoe">
-      <div class="game-thumb" id="tictactoeThumb" aria-hidden="true"></div>
+      <canvas class="game-thumb-canvas" id="tictactoeThumb" width="320" height="180" aria-label="Tic Tac Toe preview"></canvas>
       <h3>Tic Tac Toe</h3>
       <p>vs AI (unbeatable) or vs Friend. Animated X/O. Score persists.</p>
       <button class="game-play-btn" data-game="tictactoe">Play</button>
@@ -618,7 +618,7 @@ main {
 
     <!-- Game 4: Tahu Bulat -->
     <article class="game-card" data-game="tahubulat">
-      <div class="game-thumb" id="tahubulatThumb" aria-hidden="true"></div>
+      <canvas class="game-thumb-canvas" id="tahubulatThumb" width="320" height="180" aria-label="Tahu Bulat preview"></canvas>
       <h3>Tahu Bulat</h3>
       <p>Catch falling tofu in your pan. Street vendor vibes. High score saved.</p>
       <button class="game-play-btn" data-game="tahubulat">Play</button>
@@ -626,7 +626,7 @@ main {
 
     <!-- Game 5: Alto's Odyssey -->
     <article class="game-card" data-game="alto">
-      <div class="game-thumb" id="altoThumb" aria-hidden="true"></div>
+      <canvas class="game-thumb-canvas" id="altoThumb" width="320" height="180" aria-label="Alto's Odyssey preview"></canvas>
       <h3>Alto's Odyssey</h3>
       <p>Endless snowboarding. Parallax mountains, tricks, day/night cycle.</p>
       <button class="game-play-btn" data-game="alto">Play</button>
@@ -635,7 +635,7 @@ main {
 </div>
 
 <!-- Game Overlays -->
-<div class="game-overlay" id="marioOverlay" role="dialog" aria-modal="true" aria-label="Super Mario Bros">
+<div class="game-overlay" id="marioOverlay" role="dialog" aria-modal="true" aria-label="Super Mario Bros" hidden>
   <button class="close-btn" aria-label="Close game">✕</button>
   <div class="game-canvas-wrap">
     <div class="game-hud" id="marioHud">
@@ -647,7 +647,7 @@ main {
   </div>
 </div>
 
-<div class="game-overlay" id="minesweeperOverlay" role="dialog" aria-modal="true" aria-label="Minesweeper">
+<div class="game-overlay" id="minesweeperOverlay" role="dialog" aria-modal="true" aria-label="Minesweeper" hidden>
   <button class="close-btn" aria-label="Close game">✕</button>
   <div class="game-canvas-wrap">
     <div class="game-hud" id="msHud">
@@ -660,7 +660,7 @@ main {
   </div>
 </div>
 
-<div class="game-overlay" id="tictactoeOverlay" role="dialog" aria-modal="true" aria-label="Tic Tac Toe">
+<div class="game-overlay" id="tictactoeOverlay" role="dialog" aria-modal="true" aria-label="Tic Tac Toe" hidden>
   <button class="close-btn" aria-label="Close game">✕</button>
   <div class="game-canvas-wrap">
     <div class="game-hud" id="tttHud">
@@ -673,7 +673,7 @@ main {
   </div>
 </div>
 
-<div class="game-overlay" id="tahubulatOverlay" role="dialog" aria-modal="true" aria-label="Tahu Bulat">
+<div class="game-overlay" id="tahubulatOverlay" role="dialog" aria-modal="true" aria-label="Tahu Bulat" hidden>
   <button class="close-btn" aria-label="Close game">✕</button>
   <div class="game-canvas-wrap">
     <div class="game-hud" id="tbHud">
@@ -686,7 +686,7 @@ main {
   </div>
 </div>
 
-<div class="game-overlay" id="altoOverlay" role="dialog" aria-modal="true" aria-label="Alto's Odyssey">
+<div class="game-overlay" id="altoOverlay" role="dialog" aria-modal="true" aria-label="Alto's Odyssey" hidden>
   <button class="close-btn" aria-label="Close game">✕</button>
   <div class="game-canvas-wrap">
     <div class="game-hud" id="altoHud">
@@ -1205,13 +1205,20 @@ const overlays = {
 function openGame(gameId) {
   if (activeGame) closeGame(activeGame);
   activeGame = gameId;
-  overlays[gameId].classList.add('active');
+  const overlay = overlays[gameId];
+  overlay.hidden = false;
+  overlay.classList.add('active');
   document.body.style.overflow = 'hidden';
-  startGame(gameId);
+  // Defer game init until overlay is visible and laid out
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => startGame(gameId));
+  });
 }
 
 function closeGame(gameId) {
-  overlays[gameId].classList.remove('active');
+  const overlay = overlays[gameId];
+  overlay.classList.remove('active');
+  overlay.hidden = true;
   stopGame(gameId);
   if (activeGame === gameId) {
     activeGame = null;
@@ -1226,7 +1233,6 @@ document.querySelectorAll('.game-overlay .close-btn').forEach(btn => {
   btn.addEventListener('click', () => closeGame(btn.closest('.game-overlay').id.replace('Overlay','')));
 });
 
-// Close on Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && activeGame) closeGame(activeGame);
 });
@@ -1249,7 +1255,6 @@ function stopGame(id) {
     cancelAnimationFrame(gameIntervals[id]);
     delete gameIntervals[id];
   }
-  // Reset game-specific state if needed
   if (id === 'mario') resetMario();
   if (id === 'minesweeper') resetMinesweeper();
   if (id === 'tictactoe') resetTicTacToe();
@@ -1281,17 +1286,6 @@ function initMario() {
   };
   spawnMarioEntities();
   gameIntervals.mario = requestAnimationFrame(marioLoop);
-}
-
-function resizeMario() {
-  const wrap = document.querySelector('#marioOverlay .game-canvas-wrap');
-  const maxW = wrap.clientWidth - 32;
-  const maxH = wrap.clientHeight - 120;
-  const ratio = 16/9;
-  let w = Math.min(maxW, maxH * ratio);
-  let h = w / ratio;
-  marioCanvas.width = w;
-  marioCanvas.height = h;
 }
 
 function generateMarioLevel() {
@@ -2546,23 +2540,22 @@ function resetAlto() {
   document.getElementById('altoCombo').textContent = '1x';
 }
 
-// ==== Initialize game thumbs on load ====
-renderGameThumbs();
+// ==== Initialize thumbnails ====
+renderAllThumbnails();
 
 // ==== Global Keyboard Controls for Games ====
 document.addEventListener('keydown', e => {
   if (!activeGame) return;
-  const s = activeGame;
-  if (s === 'mario' && marioState) {
+  if (activeGame === 'mario' && marioState) {
     if (e.key === 'ArrowLeft' || e.key === 'a') marioState.keys.left = true;
     if (e.key === 'ArrowRight' || e.key === 'd') marioState.keys.right = true;
     if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') { e.preventDefault(); marioState.keys.jump = true; }
   }
-  if (s === 'tahubulat' && tbState) {
+  if (activeGame === 'tahubulat' && tbState) {
     if (e.key === 'ArrowLeft') tbState.keys.left = true;
     if (e.key === 'ArrowRight') tbState.keys.right = true;
   }
-  if (s === 'alto' && altoState) {
+  if (activeGame === 'alto' && altoState) {
     if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); altoState.keys.jump = true; altoState.keys.jumpHold = Date.now(); }
   }
 });
