@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KiPiPs — download from TikTok, Instagram, YouTube, Facebook, X and Spotify. No ads. No limits.">
+<meta name="theme-color" content="#0A0A0F">
+<title>KiPiPs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0A0F;
+  --surface:#13131A;
+  --border:#1E1E2E;
+  --accent:#7B2FFF;
+  --text:#F0F0F5;
+  --muted:#6B6B80;
+  --error:#FF4444;
+  --font:'Space Grotesk',system-ui,-apple-system,sans-serif;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.5;
+  overflow-x:hidden;
+}
+main{
+  width:100%;
+  max-width:560px;
+  margin:0 auto;
+  padding:48px 16px 32px;
+  display:flex;
+  flex-direction:column;
+  gap:24px;
+}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Hero */
+.hero{text-align:center}
+.brand{font-size:2.5rem;font-weight:700;color:#fff;letter-spacing:-0.02em}
+.tagline{font-size:1rem;color:var(--muted);margin-top:6px}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:20px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:50px;
+  font-size:0.8125rem;font-weight:400;color:var(--muted);
+}
+.badge svg{width:14px;height:14px;flex:none}
+.badge.active{
+  border-color:var(--accent);
+  color:var(--text);
+  box-shadow:0 0 0 1px var(--accent),0 0 14px rgba(123,47,255,.35);
+}
+
+/* Composer */
+.composer{display:flex;flex-direction:column;gap:12px}
+.url-input{
+  width:100%;
+  padding:14px 16px;
+  font-family:inherit;font-size:1rem;font-weight:400;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--text);
+  outline:none;
+}
+.url-input::placeholder{color:var(--muted)}
+.url-input:focus-visible{border-color:var(--accent);outline:2px solid rgba(123,47,255,.35);outline-offset:2px}
+
+.format-selector{
+  max-height:0;opacity:0;transform:translateY(8px);
+  overflow:hidden;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  transition:max-height 200ms ease-out,opacity 200ms ease-out,transform 200ms ease-out;
+}
+.format-selector.visible{max-height:400px;opacity:1;transform:translateY(0)}
+.fmt-row{display:flex;align-items:center;gap:10px;padding:12px 14px}
+.fmt-row + .fmt-row{border-top:1px solid var(--border)}
+.fmt-label{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;flex:none;width:72px}
+.fmt-pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{
+  padding:6px 14px;
+  font-family:inherit;font-size:0.8125rem;font-weight:400;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:50px;
+  color:var(--text);
+  cursor:pointer;
+}
+.pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.pill-images{width:100%;text-align:center}
+.fmt-row-images{padding:10px 14px}
+
+/* Download button */
+.download-btn{
+  width:100%;
+  padding:14px 20px;
+  font-family:inherit;font-size:1.0625rem;font-weight:700;
+  background:var(--accent);
+  border:none;border-radius:50px;
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.download-btn:hover:not(:disabled){filter:brightness(1.15)}
+.download-btn:active:not(:disabled){transform:scale(0.97)}
+.download-btn:disabled{opacity:.55;cursor:not-allowed}
+.spinner{
+  width:16px;height:16px;flex:none;
+  border:2px solid rgba(255,255,255,.35);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:none;
+}
+.download-btn.loading .spinner{display:block}
+.download-btn.loading .btn-text{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error{
+  min-height:1.2em;
+  font-size:0.8125rem;
+  color:var(--error);
+  text-align:center;
+}
+.error:empty{display:none}
+
+/* Info grid */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.card-icons{display:flex;gap:8px;margin-bottom:8px}
+.card-icons svg{width:20px;height:20px}
+.card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px}
+.card p{font-size:0.875rem;color:var(--muted)}
+@media(max-width:520px){.info-grid{grid-template-columns:1fr}}
+
+/* Recent */
+.recent{display:flex;flex-direction:column;gap:10px}
+.recent-header{display:flex;align-items:center;justify-content:space-between}
+.recent-title{font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.recent-clear{background:none;border:none;font-family:inherit;font-size:0.8125rem;color:var(--muted);cursor:pointer;padding:2px 4px}
+.recent-clear:hover{color:var(--text)}
+.recent-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.recent-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;min-width:0}
+.recent-icon{width:16px;height:16px;flex:none;display:inline-flex}
+.recent-icon svg{width:16px;height:16px}
+.recent-url{flex:1;min-width:0;font-size:0.8125rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-redl{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:inline-flex;flex:none}
+.recent-redl:hover{color:var(--text)}
+.recent-redl svg{width:16px;height:16px}
+.recent-empty{text-align:center;font-size:0.8125rem;color:var(--muted);padding:8px 0}
+
+/* Footer */
+.footer{text-align:center;font-size:0.75rem;color:var(--muted);margin-top:8px}
+
+/* Focus visible */
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero" aria-labelledby="brand-name">
+    <h1 id="brand-name" class="brand">KiPiPs</h1>
+    <p class="tagline">Download anything. No ads. No limits.</p>
+    <div class="badges" id="badges" aria-label="Supported platforms">
+      <span class="badge" data-platform="tiktok"><span data-icon="tiktok"></span>TikTok</span>
+      <span class="badge" data-platform="instagram"><span data-icon="instagram"></span>Instagram</span>
+      <span class="badge" data-platform="youtube"><span data-icon="youtube"></span>YouTube</span>
+      <span class="badge" data-platform="facebook"><span data-icon="facebook"></span>Facebook</span>
+      <span class="badge" data-platform="x"><span data-icon="x"></span>X</span>
+      <span class="badge" data-platform="spotify"><span data-icon="spotify"></span>Spotify</span>
+    </div>
+  </section>
+
+  <section class="composer" aria-label="Download composer">
+    <label class="sr-only" for="urlInput">Link</label>
+    <input id="urlInput" class="url-input" type="text" placeholder="Paste link here..." autocomplete="off" spellcheck="false" inputmode="url" enterkeyhint="go">
+    <div class="format-selector" id="formatSelector" aria-label="Format options"></div>
+    <button id="downloadBtn" class="download-btn" type="button" disabled>
+      <span class="spinner" aria-hidden="true"></span>
+      <span class="btn-text">Download</span>
+    </button>
+    <p class="error" id="errorEl" role="alert"></p>
+  </section>
+
+  <section class="info-grid" aria-label="What you can download">
+    <article class="card">
+      <div class="card-icons">
+        <span data-icon="tiktok"></span>
+        <span data-icon="instagram"></span>
+      </div>
+      <h3>Short-form & Stories</h3>
+      <p>Video, Reels, TikTok posts, IG carousels — all formats.</p>
+    </article>
+    <article class="card">
+      <div class="card-icons"><span data-icon="youtube"></span></div>
+      <h3>YouTube</h3>
+      <p>Video up to 1080p or MP3 audio. Any public video.</p>
+    </article>
+    <article class="card">
+      <div class="card-icons">
+        <span data-icon="x"></span>
+        <span data-icon="facebook"></span>
+      </div>
+      <h3>Social feeds</h3>
+      <p>Tweets with video, Facebook Watch, public posts.</p>
+    </article>
+    <article class="card">
+      <div class="card-icons"><span data-icon="spotify"></span></div>
+      <h3>Spotify</h3>
+      <p>Single tracks to MP3. No playlist support.</p>
+    </article>
+  </section>
+
+  <section class="recent" aria-label="Recent downloads">
+    <div class="recent-header">
+      <h2 class="recent-title">Recent</h2>
+      <button class="recent-clear" id="recentClear" type="button">Clear</button>
+    </div>
+    <ul class="recent-list" id="recentList" role="list"></ul>
+  </section>
+
+  <footer class="footer">KiPiPs — free forever. Powered by Cobalt.</footer>
+</main>
+
+<script>
+// ==== Icons ====
+const ICONS = {
+  tiktok: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"></rect><circle cx="12" cy="12" r="4.25"></circle><circle cx="17.4" cy="6.6" r="1.15" fill="currentColor" stroke="none"></circle></svg>',
+  youtube: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#FF0000"></rect><path d="M10 15.6V8.4l6 3.6-6 3.6z" fill="#fff"></path></svg>',
+  facebook: '<svg viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047v-2.66c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.971H15.83c-1.491 0-1.956.93-1.956 1.886v2.264h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="#F0F0F5" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.66l-5.214-6.817L4.4 21.75H1.093l7.73-8.835L.653 2.25H7.43l4.713 6.231 5.101-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/></svg>',
+  spotify: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#1DB954"></circle><path fill="#fff" d="M17.9 10.9c-3.2-1.9-8.55-2.1-11.6-1.15-.5.15-1.05-.15-1.2-.65-.15-.5.15-1.05.65-1.2 3.55-1.05 9.4-.85 13.1 1.35.5.3.65.9.35 1.35-.3.45-.9.6-1.3.3zm-.5 2.8c-.35.55-1.1.7-1.65.35-2.55-1.55-6.45-2-9.45-1.1-.6.15-1.2-.15-1.35-.7-.15-.6.15-1.2.7-1.35 3.55-1 7.95-.5 10.95 1.3.55.35.7 1.1.35 1.65zm-.9 2.7c-.3.45-.85.6-1.3.3-2.15-1.3-4.85-1.7-8-1-.5.1-1-.15-1.15-.6-.1-.5.15-1 .6-1.15 3.65-.8 6.75-.35 9.25 1.15.4.25.55.8.25 1.25z"/></svg>'
+};
+const ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M5 21h14"></path></svg>';
+
+// Inject icons into all [data-icon] elements
+document.querySelectorAll('[data-icon]').forEach(el => {
+  el.innerHTML = ICONS[el.dataset.icon] || '';
+});
+
+// ==== Platform detection ====
+const PLATFORM_PATTERNS = [
+  { key: 'tiktok', test: u => u.includes('tiktok.com') },
+  { key: 'instagram', test: u => u.includes('instagram.com') },
+  { key: 'youtube', test: u => u.includes('youtube.com') || u.includes('youtu.be') },
+  { key: 'facebook', test: u => u.includes('facebook.com') || u.includes('fb.watch') },
+  { key: 'x', test: u => u === 'x.com' || u.endsWith('.x.com') || u.includes('twitter.com') },
+  { key: 'spotify', test: u => u.includes('spotify.com') }
+];
+
+function detectPlatform(input) {
+  const raw = input.trim();
+  if (!raw) return null;
+  let host = raw.toLowerCase();
+  try {
+    const url = new URL(/^https?:\/\//i.test(raw) ? raw : 'https://' + raw);
+    host = url.hostname.toLowerCase();
+  } catch { host = raw.toLowerCase(); }
+  for (const p of PLATFORM_PATTERNS) {
+    if (p.test(host)) return p.key;
+  }
+  return null;
+}
+
+// ==== State ====
+let platform = null;
+let quality = 'max';
+let isAudio = false;
+let mode = 'video';
+let loading = false;
+let qPills = [];
+let mp3Btn = null;
+
+// ==== DOM ====
+const urlInput = document.getElementById('urlInput');
+const badges = document.getElementById('badges');
+const formatSelector = document.getElementById('formatSelector');
+const downloadBtn = document.getElementById('downloadBtn');
+const btnText = downloadBtn.querySelector('.btn-text');
+const errorEl = document.getElementById('errorEl');
+const recentList = document.getElementById('recentList');
+const recentClear = document.getElementById('recentClear');
+const RECENT_KEY = 'kipips_recent';
+let recent = [];
+
+// ==== Init ====
+loadRecent();
+renderRecent();
+attachListeners();
+
+// ==== Listeners ====
+function attachListeners() {
+  // URL input
+  urlInput.addEventListener('input', debounce(handleUrlInput, 150));
+  urlInput.addEventListener('paste', () => setTimeout(handleUrlInput, 0));
+  urlInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !downloadBtn.disabled) {
+      e.preventDefault();
+      doDownload();
+    }
+  });
+
+  // Download
+  downloadBtn.addEventListener('click', doDownload);
+
+  // Recent clear
+  recentClear.addEventListener('click', clearRecent);
+
+  // Re-download delegation
+  recentList.addEventListener('click', e => {
+    const btn = e.target.closest('.recent-redl');
+    if (!btn) return;
+    urlInput.value = btn.dataset.url;
+    handleUrlInput();
+    doDownload();
+  });
+}
+
+// ==== URL handling ====
+function handleUrlInput() {
+  clearError();
+  const p = detectPlatform(urlInput.value);
+  platform = p;
+  highlightBadge(p);
+
+  if (p) {
+    buildFormatSelector(p);
+    showFormatSelector();
+    downloadBtn.disabled = false;
+  } else {
+    hideFormatSelector();
+    downloadBtn.disabled = true;
+  }
+}
+
+function highlightBadge(key) {
+  badges.querySelectorAll('.badge').forEach(b => {
+    b.classList.toggle('active', b.dataset.platform === key);
+  });
+}
+
+// ==== Format selector ====
+const QUALITIES = [['Best','max'],['1080p','1080'],['720p','720'],['480p','480']];
+
+function buildFormatSelector(p) {
+  qPills = [];
+  formatSelector.innerHTML = '';
+  const isSpotify = p === 'spotify';
+  const isIg = p === 'instagram';
+
+  // Video quality row (hidden for Spotify)
+  if (!isSpotify) {
+    const row = document.createElement('div');
+    row.className = 'fmt-row';
+    row.appendChild(span('fmt-label', 'Quality'));
+    const pills = document.createElement('div');
+    pills.className = 'fmt-pills';
+    QUALITIES.forEach(([label, val]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pill' + (quality === val && !isAudio ? ' active' : '');
+      b.textContent = label;
+      b.dataset.q = val;
+      b.addEventListener('click', () => {
+        quality = val;
+        isAudio = false;
+        mode = 'video';
+        markActive();
+      });
+      qPills.push(b);
+      pills.appendChild(b);
+    });
+    row.appendChild(pills);
+    formatSelector.appendChild(row);
+  }
+
+  // Audio row
+  const arow = document.createElement('div');
+  arow.className = 'fmt-row';
+  arow.appendChild(span('fmt-label', 'Audio'));
+  mp3Btn = document.createElement('button');
+  mp3Btn.type = 'button';
+  mp3Btn.className = 'pill' + (isSpotify || isAudio ? ' active' : '');
+  mp3Btn.textContent = 'MP3';
+  if (isSpotify) {
+    mp3Btn.setAttribute('aria-disabled', 'true');
+  } else {
+    mp3Btn.addEventListener('click', () => {
+      isAudio = !isAudio;
+      mode = isAudio ? 'audio' : 'video';
+      markActive();
+    });
+  }
+  arow.appendChild(mp3Btn);
+  formatSelector.appendChild(arow);
+
+  // Images button for Instagram
+  if (isIg) {
+    const irow = document.createElement('div');
+    irow.className = 'fmt-row fmt-row-images';
+    const ib = document.createElement('button');
+    ib.type = 'button';
+    ib.className = 'pill pill-images';
+    ib.textContent = 'Download Images';
+    ib.addEventListener('click', () => doDownload('images'));
+    irow.appendChild(ib);
+    formatSelector.appendChild(irow);
+  }
+
+  markActive();
+}
+
+function markActive() {
+  qPills.forEach(b => b.classList.toggle('active', !isAudio && b.dataset.q === quality));
+  if (mp3Btn) mp3Btn.classList.toggle('active', isAudio);
+}
+
+function showFormatSelector() {
+  formatSelector.hidden = false;
+  requestAnimationFrame(() => formatSelector.classList.add('visible'));
+}
+
+function hideFormatSelector() {
+  formatSelector.classList.remove('visible');
+  requestAnimationFrame(() => {
+    if (!formatSelector.classList.contains('visible')) formatSelector.hidden = true;
+  });
+}
+
+// ==== Download ====
+async function doDownload(forceMode) {
+  if (loading) return;
+  const inputUrl = urlInput.value.trim();
+  if (!inputUrl || !platform) return;
+
+  const m = forceMode || mode;
+  const audio = m === 'audio' || platform === 'spotify';
+
+  loading = true;
+  downloadBtn.classList.add('loading');
+  downloadBtn.disabled = true;
+  btnText.textContent = 'Fetching...';
+  clearError();
+
+  try {
+    const res = await fetch('https://cobalt.tools/api/json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        url: inputUrl,
+        vQuality: quality,
+        aFormat: 'mp3',
+        isAudioOnly: audio,
+        disableMetadata: false
+      })
+    })
+    const data = await res.json()
+    if (data.status === 'stream' || data.status === 'redirect' || data.status === 'tunnel') {
+      window.open(data.url, '_blank')
+    } else {
+      showInlineError(data.text || 'Could not resolve download link.')
+    }
+  } catch (err) {
+    showInlineError('Could not reach Cobalt API. Try: cobalt.tools directly.')
+  } finally {
+    loading = false
+    downloadBtn.classList.remove('loading')
+    downloadBtn.disabled = false
+    btnText.textContent = 'Download'
+  }
+}
+
+function showInlineError(msg) {
+  errorEl.textContent = msg;
+}
+
+function clearError() {
+  errorEl.textContent = '';
+}
+
+// ==== Recent downloads ====
+function loadRecent() {
+  try {
+    const stored = localStorage.getItem(RECENT_KEY);
+    recent = stored ? JSON.parse(stored) : [];
+  } catch { recent = []; }
+}
+
+function saveRecent() {
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 5)));
+  } catch {}
+}
+
+function addToRecent(url, platform) {
+  recent = [{ url, platform, ts: Date.now() }, ...recent.filter(r => r.url !== url)].slice(0, 5);
+  saveRecent();
+  renderRecent();
+}
+
+function clearRecent() {
+  recent = [];
+  localStorage.removeItem(RECENT_KEY);
+  renderRecent();
+}
+
+function renderRecent() {
+  recentList.innerHTML = '';
+  if (!recent.length) {
+    const li = document.createElement('li');
+    li.className = 'recent-empty';
+    li.textContent = 'Nothing yet — paste a link above.';
+    recentList.appendChild(li);
+    return;
+  }
+  recent.forEach(item => {
+    const li = document.createElement('li');
+    li.className = 'recent-item';
+    const ic = document.createElement('span');
+    ic.className = 'recent-icon';
+    ic.innerHTML = ICONS[item.platform] || ICONS.x;
+    const u = document.createElement('span');
+    u.className = 'recent-url';
+    u.textContent = item.url;
+    u.title = item.url;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'recent-redl';
+    btn.setAttribute('aria-label', 'Download again: ' + item.url);
+    btn.dataset.url = item.url;
+    btn.innerHTML = ARROW;
+    li.append(ic, u, btn);
+    recentList.appendChild(li);
+  });
+}
+
+// ==== Utils ====
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+function span(className, text) {
+  const el = document.createElement('span');
+  el.className = className;
+  el.textContent = text;
+  return el;
+}
+</script>
+</body>
+</html>
